@@ -1,15 +1,20 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
 
 # 建立与数据库的连接
 DATABASE_URL = "postgresql+psycopg2://aurora@localhost:5432/postgres"
 engine = create_engine(DATABASE_URL, echo=True, pool_pre_ping=True)
 
-# 创建 SessionLocal 类对象用于数据库会话
+# 创建 Session（会话）类 用于数据库交互
+# sessionmaker()是一个工厂函数，接受配置参数，然后返回一个配置好的类（Class）
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# 生成器函数
-# 适配 FastAPI 的 Depends，用于在每次请求中打开/关闭 DB session
+# 创建ORM模型的Base类（所有模型的基础）
+Base = declarative_base()
+
+# 依赖函数
+# 适配 FastAPI 的 Depends，用于在每次请求中 打开/关闭 数据库会话
 def get_db():
     db = SessionLocal()
     try:
@@ -18,18 +23,3 @@ def get_db():
         db.close()
 
 
-# 使用 ORM，定义模型
-from sqlalchemy import Column, Integer, String, DateTime
-from sqlalchemy.ext.declarative import declarative_base
-
-Base = declarative_base()
-
-class Task(Base):
-    __tablename__ = "task"
-
-    id = Column(Integer, primary_key=True, index=True)
-    task_name = Column(String, index=True)
-    task_content = Column(String)
-    status = Column(String)
-    created_at = Column(DateTime)
-    updated_at = Column(DateTime)
