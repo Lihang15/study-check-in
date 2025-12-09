@@ -1,11 +1,9 @@
 from sqlalchemy import Column, Integer, String, DateTime, func
-from app.database import Base
+from app.core.db import Base
 
 class Task(Base):
     '''
-    任务表模型
-    
-    该类映射到数据库中的'task'表
+    类 Task 映射到数据库中的 'task' 表
     '''
     __tablename__ = "task"
 

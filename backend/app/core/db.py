@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker, declarative_base
+
 
 # 建立与数据库的连接
 DATABASE_URL = "postgresql+psycopg2://aurora@localhost:5432/postgres"
