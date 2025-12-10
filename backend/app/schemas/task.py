@@ -1,14 +1,13 @@
 from pydantic import BaseModel
-from typing import Optional
 from datetime import datetime
+from typing import Optional
 
-
-class TaskOut(BaseModel):
+class TaskSchema(BaseModel):
     id: int
-    task_name: Optional[str] = None
+    task_name: str
     task_content: Optional[str] = None
     status: Optional[str] = None
-    created_at: Optional[datetime] = None
+    created_at: Optional[datetime] = None  # <-- 可选
     updated_at: Optional[datetime] = None
 
     class Config:

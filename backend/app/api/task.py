@@ -1,23 +1,24 @@
-from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
-from typing import List, Dict, Any
+from fastapi import APIRouter, HTTPException
+from typing import List
 
-# 从 database.py 中导入会话依赖函数
-from app.core.db import get_db
+from app.schemas.task import TaskSchema  # <-- 加上这句
+from app.service.task import TaskService
 
-# 从 app.models.task 中导入 ORM 模型
-from app.models.task import Task 
-from app.schemas.task import TaskOut
-
-# 创建一个 APIRouter 实例，用于组织路由
 router = APIRouter()
 
-# 接口路径: /getTasks
-@router.get("/getTasks", response_model=List[TaskOut])
-def get_all_tasks(db: Session = Depends(get_db)):
-    """从 task 表中查询所有数据并返回（以 Pydantic 模型序列化）"""
-    # 查询 Task 对象的所有数据
-    tasks = db.query(Task).all()
+@router.get("/getTasks", response_model=List[TaskSchema])  # <-- 改为 TaskSchema
+def get_all_tasks():
+    try:
+        task_service = TaskService()
+        tasks = task_service.get_all_tasks()
+        return tasks  # 可以返回 SQLAlchemy，对应 orm_mode 自动转换
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"获取任务列表失败: {str(e)}")
 
-    # 直接返回 ORM 对象列表，FastAPI 会使用 Pydantic 的 orm_mode 进行序列化
-    return tasks
+@router.get("/tasks/{task_id}", response_model=TaskSchema)  # <-- 改为 TaskSchema
+def get_task_by_id(task_id: int):
+    task_service = TaskService()
+    task = task_service.get_task_by_id(task_id)
+    if not task:
+        raise HTTPException(status_code=404, detail="任务不存在")
+    return task

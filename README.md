@@ -63,3 +63,19 @@ study-checkin/
 └── README.md
 
 
+## backend 项目启动说明
+cd backend
+
+# 创建虚拟环境（如已有可跳过）
+uv venv
+source .venv/bin/activate
+
+# 安装依赖
+uv pip install -r requirements.txt
+
+# 运行 FastAPI
+uv run uvicorn app.main:app --host 0.0.0.0 --port 8001 --reload
+
+# postgres 管理员可以看到所有数据库
+用管理员账号连接到postgre，，创建check-in数据库
+并创建task表
