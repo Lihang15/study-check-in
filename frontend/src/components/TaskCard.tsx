@@ -3,12 +3,13 @@ import type { Task } from '../types/task';
 
 interface TaskCardProps {
   task: Task;
-  onDelete: (id: string) => void;
+  onDelete: (id: number) => void;
   onEdit: (task: Task) => void;
 }
 
 const TaskCard: React.FC<TaskCardProps> = ({ task, onDelete, onEdit }) => {
-  const formatDate = (date: Date) => {
+  const formatDate = (date?: string) => {
+    if (!date) return '';
     return new Date(date).toLocaleDateString();
   };
 
@@ -30,7 +31,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onDelete, onEdit }) => {
           display: '-webkit-box',
           WebkitLineClamp: 2,
           WebkitBoxOrient: 'vertical'
-        }}>{task.title}</h3>
+        }}>{task.task_name}</h3>
         <p style={{ 
           color: '#64748b', 
           marginBottom: '0.5rem',

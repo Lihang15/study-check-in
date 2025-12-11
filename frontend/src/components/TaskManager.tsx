@@ -7,65 +7,60 @@ const TaskManager: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // 模拟从API获取数据
-  useEffect(() => {
-    // 模拟API调用延迟
-    setTimeout(() => {
-      const mockTasks: Task[] = [
-        {
-          id: '1',
-          title: '学习日语',
-          task_content: '完成日语第一单元',
-          created_at: new Date('2023-05-01'),
-          updated_at: new Date('2023-05-02')
+  // 从API获取任务数据
+  const fetchTasks = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const response = await fetch('http://localhost:8001/getTasks', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        {
-          id: '2',
-          title: '学习PyTorch',
-          task_content: '掌握PyTorch的基本语法和高级特性',
-          created_at: new Date('2023-05-03')
-        },
-        {
-          id: '3',
-          title: '学习fastApi ',
-          task_content: '了解fastApi 的基础知识和应用场景',
-          created_at: new Date('2023-05-05')
-        },
-        {
-          id: '4',
-          title: '学习数据库',
-          task_content: '掌握SQL和NoSQL数据库的基本操作',
-          created_at: new Date('2023-05-07')
-        }
-      ];
-      setTasks(mockTasks);
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setTasks(data);
+    } catch (err) {
+      console.error('获取任务失败:', err);
+      setError(err instanceof Error ? err.message : '获取任务失败');
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
+  };
+
+  useEffect(() => {
+    fetchTasks();
   }, []);
 
-  const handleAddTask = (taskData: Omit<Task, 'id' | 'created_at' | 'updated_at'> & { id?: string; created_at?: Date; updated_at?: Date }) => {
+  const handleAddTask = (taskData: Omit<Task, 'id' | 'created_at' | 'updated_at'> & { id?: number; created_at?: string; updated_at?: string }) => {
     if (taskData.id) {
       // 更新任务
       setTasks(tasks.map(task => 
         task.id === taskData.id 
-          ? { ...task, title: taskData.title, task_content: taskData.task_content, updated_at: new Date() } 
+          ? { ...task, task_name: taskData.task_name, task_content: taskData.task_content, updated_at: new Date().toISOString() } 
           : task
       ));
       setEditingTask(null);
     } else {
       // 添加新任务
       const newTask: Task = {
-        id: Date.now().toString(),
-        title: taskData.title,
+        id: Date.now(),
+        task_name: taskData.task_name,
         task_content: taskData.task_content,
-        created_at: taskData.created_at || new Date()
+        created_at: taskData.created_at || new Date().toISOString()
       };
       setTasks([...tasks, newTask]);
     }
   };
 
-  const handleDeleteTask = (id: string) => {
+  const handleDeleteTask = (id: number) => {
     setTasks(tasks.filter(task => task.id !== id));
   };
 
@@ -88,6 +83,44 @@ const TaskManager: React.FC = () => {
           borderRadius: '50%',
           animation: 'spin 1s linear infinite'
         }}></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div style={{ 
+        maxWidth: '1200px', 
+        margin: '0 auto', 
+        padding: '1rem',
+        textAlign: 'center'
+      }}>
+        <div style={{
+          backgroundColor: '#fee2e2',
+          border: '1px solid #fecaca',
+          borderRadius: '0.5rem',
+          padding: '1rem',
+          color: '#dc2626'
+        }}>
+          <h3 style={{ fontSize: '1.125rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+            获取任务失败
+          </h3>
+          <p>{error}</p>
+          <button 
+            onClick={fetchTasks}
+            style={{
+              marginTop: '1rem',
+              backgroundColor: '#3b82f6',
+              color: 'white',
+              padding: '0.5rem 1rem',
+              borderRadius: '0.375rem',
+              border: 'none',
+              cursor: 'pointer'
+            }}
+          >
+            重试
+          </button>
+        </div>
       </div>
     );
   }

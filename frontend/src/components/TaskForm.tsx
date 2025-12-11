@@ -3,7 +3,7 @@ import type { Task } from '../types/task';
 
 interface TaskFormProps {
   task?: Task | null;
-  onSubmit: (task: Omit<Task, 'id' | 'created_at' | 'updated_at'> & { id?: string; created_at?: Date; updated_at?: Date }) => void;
+  onSubmit: (task: Omit<Task, 'id' | 'created_at' | 'updated_at'> & { id?: number; created_at?: string; updated_at?: string }) => void;
   onCancel: () => void;
 }
 
@@ -13,8 +13,8 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, onSubmit, onCancel }) => {
 
   useEffect(() => {
     if (task) {
-      setTitle(task.title);
-      setTaskContent(task.task_content);
+      setTitle(task.task_name);
+      setTaskContent(task.task_content || '');
     } else {
       setTitle('');
       setTaskContent('');
@@ -27,10 +27,10 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, onSubmit, onCancel }) => {
 
     const formData = {
       id: task?.id,
-      title,
+      task_name: title,
       task_content: taskContent,
-      created_at: task?.created_at || new Date(),
-      updated_at: task ? new Date() : undefined
+      created_at: task?.created_at || new Date().toISOString(),
+      updated_at: task ? new Date().toISOString() : undefined
     };
 
     onSubmit(formData);
