@@ -79,3 +79,9 @@ uv run uvicorn app.main:app --host 0.0.0.0 --port 8001 --reload
 # postgres 管理员可以看到所有数据库
 用管理员账号连接到postgre，，创建check-in数据库
 并创建task表
+
+## frontend 项目启动说明
+cd frontend
+npm install -g pnpm 
+pnpm install
+pnpm run dev

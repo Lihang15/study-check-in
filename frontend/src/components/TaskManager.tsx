@@ -8,6 +8,7 @@ const TaskManager: React.FC = () => {
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showAddForm, setShowAddForm] = useState(false);
 
   // 从API获取任务数据
   const fetchTasks = async () => {
@@ -58,6 +59,7 @@ const TaskManager: React.FC = () => {
       };
       setTasks([...tasks, newTask]);
     }
+    setShowAddForm(false);
   };
 
   const handleDeleteTask = (id: number) => {
@@ -70,6 +72,12 @@ const TaskManager: React.FC = () => {
 
   const handleCancelEdit = () => {
     setEditingTask(null);
+    setShowAddForm(false);
+  };
+
+  const handleShowAddForm = () => {
+    setEditingTask(null);
+    setShowAddForm(true);
   };
 
   if (isLoading) {
@@ -129,11 +137,25 @@ const TaskManager: React.FC = () => {
     <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '1rem' }}>
      
       
-
-      
       {/* 任务列表 */}
       <div style={{ marginTop: '2rem', marginBottom:'100px' }}>
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#334155', marginBottom: '1rem' }}>晨曦的任务列表</h2>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#334155' }}>晨曦的任务列表</h2>
+          <button
+            onClick={handleShowAddForm}
+            style={{
+              backgroundColor: '#3b82f6',
+              color: 'white',
+              padding: '0.5rem 1rem',
+              borderRadius: '0.375rem',
+              border: 'none',
+              cursor: 'pointer',
+              fontSize: '0.875rem'
+            }}
+          >
+            添加新任务
+          </button>
+        </div>
         {tasks.length === 0 ? (
           <div className="text-center py-8 text-muted">
             暂无任务，请添加新任务
@@ -152,12 +174,103 @@ const TaskManager: React.FC = () => {
         )}
       </div>
 
-            {/* 任务表单 */}
-      <TaskForm 
-        task={editingTask} 
-        onSubmit={handleAddTask} 
-        onCancel={handleCancelEdit} 
-      />
+      {/* 任务表单弹窗 */}
+      {showAddForm && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            backgroundColor: 'white',
+            borderRadius: '0.5rem',
+            padding: '1.5rem',
+            width: '90%',
+            maxWidth: '500px',
+            maxHeight: '90vh',
+            overflowY: 'auto',
+            position: 'relative'
+          }}>
+            <button
+              onClick={handleCancelEdit}
+              style={{
+                position: 'absolute',
+                top: '0.5rem',
+                right: '0.5rem',
+                background: 'none',
+                border: 'none',
+                fontSize: '1.5rem',
+                cursor: 'pointer',
+                color: '#666'
+              }}
+            >
+              ×
+            </button>
+            <TaskForm 
+              task={null} 
+              onSubmit={handleAddTask} 
+              onCancel={handleCancelEdit}
+              showTitle={false}
+            />
+          </div>
+        </div>
+      )}
+      
+      {/* 编辑任务表单 */}
+      {editingTask && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            backgroundColor: 'white',
+            borderRadius: '0.5rem',
+            padding: '1.5rem',
+            width: '90%',
+            maxWidth: '500px',
+            maxHeight: '90vh',
+            overflowY: 'auto',
+            position: 'relative'
+          }}>
+            <button
+              onClick={handleCancelEdit}
+              style={{
+                position: 'absolute',
+                top: '0.5rem',
+                right: '0.5rem',
+                background: 'none',
+                border: 'none',
+                fontSize: '1.5rem',
+                cursor: 'pointer',
+                color: '#666'
+              }}
+            >
+              ×
+            </button>
+            <TaskForm 
+              task={editingTask} 
+              onSubmit={handleAddTask} 
+              onCancel={handleCancelEdit}
+              showTitle={false}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
