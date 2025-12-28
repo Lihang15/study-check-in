@@ -13,7 +13,8 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 # 创建ORM模型的Base类（所有模型的基础）
 Base = declarative_base()
 
-# 依赖函数
+
+# “会话依赖函数”
 # 适配 FastAPI 的 Depends，用于在每次请求中 打开/关闭 数据库会话
 def get_db():
     db = SessionLocal()
