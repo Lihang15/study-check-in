@@ -15,7 +15,7 @@ fastapi + postgre
 
 
 # 结构
-
+```
 study-checkin/
 │
 ├── frontend/                     # 前端 React 工程
@@ -61,7 +61,7 @@ study-checkin/
 │   └── docker-compose.yml
 ├── ai-agent/                      # ai智能体-没准会写
 └── README.md
-
+```
 
 ## backend 项目启动说明
 cd backend
@@ -81,6 +81,7 @@ uv run uvicorn app.main:app --host 0.0.0.0 --port 8001 --reload
 并创建task表
 
 ## frontend 项目启动说明
+安装nodejs环境，百度一下这里
 cd frontend
 npm install -g pnpm 
 pnpm install
