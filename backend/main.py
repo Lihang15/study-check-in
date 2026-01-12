@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .api import auth, records, task
+from app.api import auth, records, task
 
 app = FastAPI(title="Study Check-in")
 
@@ -18,3 +18,8 @@ app.add_middleware(
 app.include_router(auth.router)
 app.include_router(records.router)
 app.include_router(task.router)
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run("main:app", port=8000, reload=True)

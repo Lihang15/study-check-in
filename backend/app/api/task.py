@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from typing import List
 
-from app.schemas.task import TaskSchema  # <-- 加上这句
+from app.schemas.task import TaskSchema
 from app.service.task import TaskService
 
 router = APIRouter()
@@ -23,13 +23,13 @@ def get_task_by_id(task_id: int):
         raise HTTPException(status_code=404, detail="任务不存在")
     return task
 
-@router.post("/createTasks", response_model=TaskSchema)
+@router.post("/createTasks", response_model=dict)
 def create_task(task: TaskSchema):
     task_service = TaskService()
     task_data = task.dict()
-    new_task = task_service.create_task(task_data)
-    
-    if new_task:
-        return {"status": True}
-    else:
+    try:
+        new_task = task_service.create_task(task_data)
+        if new_task:
+            return {"status": True}
+    except Exception:
         return {"status": False}

@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from typing import List, Dict
 
 
-from core.db import get_db
+from app.core.db import get_db
 from app.models.user import User as UserModel
 
 

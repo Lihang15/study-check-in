@@ -7,7 +7,7 @@ class TaskSchema(BaseModel):
     task_name: str
     task_content: Optional[str] = None
     status: Optional[str] = None
-    created_at: Optional[datetime] = None  # <-- 可选
+    created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 
     class Config:
