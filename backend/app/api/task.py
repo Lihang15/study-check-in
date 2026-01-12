@@ -22,3 +22,14 @@ def get_task_by_id(task_id: int):
     if not task:
         raise HTTPException(status_code=404, detail="任务不存在")
     return task
+
+@router.post("/createTasks", response_model=TaskSchema)
+def create_task(task: TaskSchema):
+    task_service = TaskService()
+    task_data = task.dict()
+    new_task = task_service.create_task(task_data)
+    
+    if new_task:
+        return {"status": True}
+    else:
+        return {"status": False}
