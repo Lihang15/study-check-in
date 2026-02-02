@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from typing import List
 
-from app.schemas.task import TaskSchema
+from app.schemas.task import TaskSchema, UpdateTaskSchema, DeleteTaskSchema
 from app.service.task import TaskService
 
 router = APIRouter()
@@ -36,3 +36,27 @@ def create_task(task: TaskSchema):
             return {"status": True}
     except Exception:
         return {"status": False}
+
+
+@router.post("/updateTask", response_model=dict)
+def update_task(task: UpdateTaskSchema):
+    task_service = TaskService()
+    update_data = task.dict()
+    task_id = update_data.pop("id")
+    try:
+        updated = task_service.update_task(task_id, update_data)
+        if updated:
+            return {"status": True}
+        return {"status": False, "detail": "任务不存在或未更新"}
+    except Exception as e:
+        raise {"status": False, "detail": f"更新任务失败: {str(e)}"}
+
+
+@router.post("/deleteTask", response_model=dict)
+def delete_task(task: DeleteTaskSchema):
+    task_service = TaskService()
+    try:
+        success = task_service.delete_task(task.id)
+        return {"status": bool(success)}
+    except Exception as e:
+        raise {"status": False, "detail": f"删除任务失败: {str(e)}"}
