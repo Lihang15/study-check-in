@@ -15,7 +15,7 @@ class Task(Base):
         Integer, primary_key=True, index=True
     )  # primary_key=True：将该字段设为主键，index=True：自动排序
     task_name = Column(String, index=True)
-    task_content = Column(String)
-    status = Column(String)
-    created_at = Column(DateTime, server_default=func.now())
-    updated_at = Column(DateTime)
+    task_content = Column(String, nullable=False)
+    status = Column(String, nullable=False)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime, onupdate=func.now(), nullable=False)

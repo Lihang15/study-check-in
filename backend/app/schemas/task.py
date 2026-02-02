@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import Optional
 
 class TaskSchema(BaseModel):
-    id: int
+    id: Optional[int]
     task_name: str
     task_content: Optional[str] = None
     status: Optional[str] = None
@@ -12,3 +12,14 @@ class TaskSchema(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class UpdateTaskSchema(BaseModel):
+    id: int
+    task_name: Optional[str] = None
+    task_content: Optional[str] = None
+    status: Optional[str] = None
+
+
+class DeleteTaskSchema(BaseModel):
+    id: int

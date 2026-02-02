@@ -14,6 +14,6 @@ class User(Base):
     # 定义所有字段及其属性
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String)
-    password = Column(String)
-    created_time = Column(DateTime, server_default=func.now())
-    updated_time = Column(DateTime)
+    password = Column(String, nullable=False)
+    created_time = Column(DateTime, server_default=func.now(), nullable=False)
+    updated_time = Column(DateTime, onupdate=func.now(), nullable=False)

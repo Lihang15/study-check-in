@@ -74,7 +74,7 @@ source .venv/bin/activate
 uv pip install -r requirements.txt
 
 # 运行 FastAPI
-uv run uvicorn app.main:app --host 0.0.0.0 --port 8001 --reload
+uv run uvicorn main:app --host 0.0.0.0 --port 8001 --reload
 
 # postgres 管理员可以看到所有数据库
 用管理员账号连接到postgre，，创建check-in数据库

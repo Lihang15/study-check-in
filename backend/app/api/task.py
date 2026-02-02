@@ -11,7 +11,10 @@ def get_all_tasks():
     try:
         task_service = TaskService()
         tasks = task_service.get_all_tasks()
-        return tasks  # 可以返回 SQLAlchemy，对应 orm_mode 自动转换
+        # 确保返回可序列化的列表：过滤掉可能为 None 的项，防止 FastAPI 响应验证错误
+        if tasks is None:
+            return []
+        return [t for t in tasks if t is not None]
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"获取任务列表失败: {str(e)}")
 
