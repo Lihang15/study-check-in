@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import Optional
 
 class TaskSchema(BaseModel):
-    id: Optional[int]
+    id: Optional[int] = None
     task_name: str
     task_content: Optional[str] = None
     status: Optional[str] = None
@@ -15,11 +15,9 @@ class TaskSchema(BaseModel):
 
 
 class UpdateTaskSchema(BaseModel):
-    id: int
     task_name: Optional[str] = None
     task_content: Optional[str] = None
     status: Optional[str] = None
 
 
-class DeleteTaskSchema(BaseModel):
-    id: int
+# 删除 DeleteTaskSchema，因为 id 将通过路径参数传递

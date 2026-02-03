@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from typing import List
 
-from app.schemas.task import TaskSchema, UpdateTaskSchema, DeleteTaskSchema
+from app.schemas.task import TaskSchema, UpdateTaskSchema
 from app.service.task import TaskService
 
 router = APIRouter()
@@ -38,25 +38,24 @@ def create_task(task: TaskSchema):
         return {"status": False}
 
 
-@router.post("/updateTask", response_model=dict)
-def update_task(task: UpdateTaskSchema):
+@router.post("/updateTask/{task_id}", response_model=dict)
+def update_task(task_id: int, task: UpdateTaskSchema):
     task_service = TaskService()
-    update_data = task.dict()
-    task_id = update_data.pop("id")
+    update_data = task.dict(exclude_unset=True)
     try:
         updated = task_service.update_task(task_id, update_data)
         if updated:
             return {"status": True}
         return {"status": False, "detail": "任务不存在或未更新"}
     except Exception as e:
-        raise {"status": False, "detail": f"更新任务失败: {str(e)}"}
+        raise HTTPException(status_code=500, detail=f"更新任务失败: {str(e)}")
 
 
-@router.post("/deleteTask", response_model=dict)
-def delete_task(task: DeleteTaskSchema):
+@router.post("/deleteTask/{task_id}", response_model=dict)
+def delete_task(task_id: int):
     task_service = TaskService()
     try:
-        success = task_service.delete_task(task.id)
+        success = task_service.delete_task(task_id)
         return {"status": bool(success)}
     except Exception as e:
-        raise {"status": False, "detail": f"删除任务失败: {str(e)}"}
+        raise HTTPException(status_code=500, detail=f"删除任务失败: {str(e)}")

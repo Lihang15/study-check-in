@@ -36,8 +36,9 @@ class TaskService:
         """创建新任务"""
         db = self._get_db()
         try:
-            # 可以在这里添加业务逻辑验证
-            db_task = TaskModel(**task_data)
+            # 过滤掉值为 None 的字段，以便使用数据库默认值（如 id 自增、时间戳）
+            filtered_data = {k: v for k, v in task_data.items() if v is not None}
+            db_task = TaskModel(**filtered_data)
             db.add(db_task)
             db.commit()
             db.refresh(db_task)

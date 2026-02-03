@@ -40,30 +40,75 @@ const TaskManager: React.FC = () => {
     fetchTasks();
   }, []);
 
-  const handleAddTask = (taskData: Omit<Task, 'id' | 'created_at' | 'updated_at'> & { id?: number; created_at?: string; updated_at?: string }) => {
-    if (taskData.id) {
-      // 更新任务
-      setTasks(tasks.map(task => 
-        task.id === taskData.id 
-          ? { ...task, task_name: taskData.task_name, task_content: taskData.task_content, updated_at: new Date().toISOString() } 
-          : task
-      ));
-      setEditingTask(null);
-    } else {
-      // 添加新任务
-      const newTask: Task = {
-        id: Date.now(),
-        task_name: taskData.task_name,
-        task_content: taskData.task_content,
-        created_at: taskData.created_at || new Date().toISOString()
-      };
-      setTasks([...tasks, newTask]);
+  const handleAddTask = async (taskData: Omit<Task, 'id' | 'created_at' | 'updated_at'> & { id?: number; created_at?: string; updated_at?: string }) => {
+    try {
+      if (taskData.id) {
+        // 更新任务
+        const response = await fetch(`http://localhost:8001/updateTask/${taskData.id}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            task_name: taskData.task_name,
+            task_content: taskData.task_content,
+            status: taskData.status || 'pending'
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('更新任务失败');
+        }
+        
+        await fetchTasks();
+        setEditingTask(null);
+      } else {
+        // 添加新任务
+        const response = await fetch('http://localhost:8001/createTasks', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            task_name: taskData.task_name,
+            task_content: taskData.task_content,
+            status: 'pending'
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('创建任务失败');
+        }
+
+        await fetchTasks();
+      }
+      setShowAddForm(false);
+    } catch (err) {
+      console.error('操作失败:', err);
+      alert(err instanceof Error ? err.message : '操作失败');
     }
-    setShowAddForm(false);
   };
 
-  const handleDeleteTask = (id: number) => {
-    setTasks(tasks.filter(task => task.id !== id));
+  const handleDeleteTask = async (id: number) => {
+    if (window.confirm('确定要删除这个任务吗？')) {
+      try {
+        const response = await fetch(`http://localhost:8001/deleteTask/${id}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error('删除任务失败');
+        }
+
+        await fetchTasks();
+      } catch (err) {
+        console.error('删除失败:', err);
+        alert(err instanceof Error ? err.message : '删除失败');
+      }
+    }
   };
 
   const handleEditTask = (task: Task) => {

@@ -18,4 +18,4 @@ class Task(Base):
     task_content = Column(String, nullable=False)
     status = Column(String, nullable=False)
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
-    updated_at = Column(DateTime, onupdate=func.now(), nullable=False)
+    updated_at = Column(DateTime, default=func.now(), onupdate=func.now(), nullable=False)

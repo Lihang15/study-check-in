@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 
 
 # 建立与数据库的连接
-DATABASE_URL = "postgresql+psycopg2://aurora@localhost:5432/postgres"
+DATABASE_URL = "postgresql+psycopg2://aurora:123456@localhost:5432/postgres"
 
 engine = create_engine(DATABASE_URL, echo=True, pool_pre_ping=True)
 
